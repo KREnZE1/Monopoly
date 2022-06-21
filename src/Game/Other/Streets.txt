@@ -1,0 +1,36 @@
+Name: Grundstückswert, Miete, 1 Haus, 2 Häuser, 3 Häuser, 4 Häuser, Hotel, Hauskosten, Hypothek, Farbgruppe
+Badstraße: 1200, 40, 200, 600, 1800, 3200, 5000, 1000, 600, dunkellila
+Turmstraße: 1200, 80, 400, 1200, 3600, 6400, 9000, 1000, 600, dunkellila
+Chausseestraße: 2000, 120, 600, 1800, 5400, 8000, 11000, 1000, 1000, hellblau
+Elisenstraße: 2000, 120, 600, 1800. 5400, 8000, 11000, 1000, 1000, hellblau
+Poststraße: 2400, 160, 800, 2000, 6000, 9000, 12000, 1000, 1200, hellblau
+Seestraße: 2800, 200, 1000, 3000, 9000, 12500, 15000, 2000, 1400, helllila
+Hafenstraße: 2800, 200, 1000, 3000, 9000, 12500, 15000, 2000, 1400, helllila
+Neue Straße: 3200, 240, 1200, 3600, 10000, 14000, 18000, 2000, 1600, helllila
+Münchner Straße: 3600, 280, 1400, 4000, 11000, 15000, 19000, 2000, 1800, orange
+Wiener Straße: 3600, 280, 1400, 4000, 11000, 15000, 19000, 2000, 1800, orange
+Berliner Straße: 4000, 320, 1600, 4400, 12000, 16000, 20000, 2000, 2000, orange
+Theaterstraße: 4400, 360, 1800, 5000, 14000, 17500, 21000, 3000, 2200, rot
+Museumstraße: 4400, 360, 1800, 5000, 14000, 17500, 21000, 3000, 2200, rot
+Opernplatz: 4800, 400, 2000, 6000, 15000, 18500, 22000, 3000, 2400, rot
+Lessingstraße: 5200, 480, 2200, 6600, 16000, 19500, 23000, 3000, 2600, gelb
+Schillerstraße: 5200, 480, 2200, 6600, 16000, 19500, 23000, 3000, 2600, gelb
+Goethestraße: 5600, 520, 2400, 7200, 1700, 20500, 24000, 3000, 2800, gelb
+Rathausplatz: 6000, 520, 2600, 7800, 18000, 22000, 25500, 4000, 3000, grün
+Hauptstraße: 6000, 520, 2600, 7800, 18000, 22000, 25500, 4000, 3000, grün
+Bahnhofstraße: 6400, 560, 3000, 9000, 20000, 24000, 28000, 4000, 3200, grün
+Parkstraße: 7000, 700, 3500, 10000, 22000, 26000, 30000, 4000, 3500, dunkelblau
+Schlossallee: 8000, 1000, 4000, 12000, 28000, 34000, 40000, 4000, 4000, dunkelblau
+
+Name: Grundstückswert, 1 Bahnhof, 2 Bahnhöfe, 3 Bahnhöfe, 4 Bahnhöfe, Hypothek
+Südbahnhof: 4000, 500, 1000, 2000, 4000, 2000
+Westbahnhof: 4000, 500, 1000, 2000, 4000, 2000
+Nordbahnhof: 4000, 500, 1000, 2000, 4000, 2000
+Ostbahnhof: 4000, 500, 1000, 2000, 4000, 2000
+
+Name: Grundstückswert, 1 Werk, 2 Werke, Hypothek
+Elektrizitätswerk: 3000, Augen*80, Augen*200, 1500
+Wasserwerk: 3000, Augen*80, Augen*200, 1500
+
+Einkommenssteuer: 4000
+Zusatzsteuer: 2000
