@@ -9,5 +9,5 @@ public abstract class Buyables extends Location {
     String group;
 
 
-
+    public abstract int getHouses();
 }

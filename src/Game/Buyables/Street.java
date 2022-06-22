@@ -16,4 +16,34 @@ public class Street extends Buyables {
         this.group = group;
         houses = 0;
     }
+
+    public void addHouse() {
+        houses++;
+    }
+
+    public int getRent() {
+        return rent[houses];
+    }
+
+    public int getHousePrice() {
+        return housePrice;
+    }
+
+    public int getHouses() {
+        return houses;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getBasePrice() {
+        return basePrice;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+
 }
