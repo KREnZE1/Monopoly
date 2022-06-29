@@ -10,4 +10,6 @@ public abstract class Buyables extends Location {
 
 
     public abstract int getHouses();
+    public abstract String getName();
+    public abstract int getBasePrice();
 }

@@ -3,6 +3,7 @@ package Game.Cards;
 import Game.Buyables.Buyables;
 import Game.Player;
 
+import java.util.ArrayList;
 import java.util.regex.*;
 
 public class CommunityChest {
@@ -52,7 +53,7 @@ public class CommunityChest {
             case "pay_special":
                 int houses = 0;
                 int hotels = 0;
-                Buyables[] properties = player.getProperties();
+                ArrayList<Buyables> properties = player.getProperties();
                 for (Buyables property : properties) {
                     if (property != null) {
                         if (property.getHouses() == 5) {

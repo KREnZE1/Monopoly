@@ -3,35 +3,79 @@ package Game;
 import Game.Buyables.Buyables;
 import Game.Cards.Chance;
 import Game.Cards.CommunityChest;
+import javafx.beans.property.Property;
+
+import java.util.ArrayList;
 
 public class Player {
     String name;
     int money;
     int position;
-    Buyables[] properties;
+    ArrayList<Buyables> properties;
     int doubles;
     boolean ccFree;
     boolean cFree;
+
+    static Chance[] chanceCards = new Chance[] {
+            new Chance("Du hast den 2. Preis in einer Schönheitskonkurrenz gewonnen. Ziehe 200 ein.", "get"),
+            new Chance("Du hast in einem Kreuzworträtsel gewonnen. Ziege 2000 ein.", "get"),
+            new Chance("Einkommenssteuer-Rückzahlung. Ziehe 400 ein.", "get"),
+            new Chance("Zahle 3000 Schulgeld.", "pay"),
+            new Chance("Rücke vor bis auf Los.", "move"),
+            new Chance("Arztkosten. Zahle 1000.", "pay"),
+            new Chance("Die Jahresrente wird fällig. Ziehe 2000 ein.", "get"),
+            new Chance("Gehe in das Gefängnis. Begib dich direkt dorthin. Gehe nicht über Los. Ziehe nicht 4000 ein.", "prison"),
+            new Chance("Zahle 800 pro Haus und 2300 pro Hotel, das du besitzt.", "pay_special"),
+            new Chance("Du erhältst auf Aktien Dividende. Ziehe 900 ein.", "get"),
+            new Chance("Du erbst 2000.", "get"),
+            new Chance("Aus Lagerverkäufen erhältst du 500.", "get"),
+            new Chance("Zahle 2000 an das Krankenhaus.", "pay"),
+            new Chance("Du kommst aus dem Gefängnis frei. Behalte diese Karte, bis du sie verwendest oder verkaufst.", "prison_free"),
+            new Chance("Es ist dein Geburtstag. Ziehe 1000 von jedem Spieler ein.", "get_special"),
+            new Chance("Bank-Irrtum. Ziehe 4000 ein.", "get"),
+    };
+
+    static CommunityChest[] communityChestCards = new CommunityChest[] {
+            new CommunityChest("Rücke vor bis zum Opernplatz. Wenn du über Los kommst, ziehe 4000 ein.", "move"),
+            new CommunityChest("Rücke vor bis zur Seestraße. Wenn du über Los kommst, ziehe 4000 ein.", "move"),
+            new CommunityChest("Gehe zurück zur Badstraße.", "move"),
+            new CommunityChest("Zahle eine Strafe von 200 oder nimm eine Gemeinschaftskarte.", "pay"),
+            new CommunityChest("Gehe 3 Felder zurück.", "move"),
+            new CommunityChest("Du kommst aus dem Gefängnis frei. Behalte diese Karte, bis du sie verwendest oder verkaufst.", "prison_free"),
+            new CommunityChest("Gehe in das Gefängnis. Begib dich direkt dorthin. Gehe nicht über Los. Ziehe nicht 4000 ein.", "move"),
+            new CommunityChest("Rücke vor bis zum nächsten Bahnhof. Der Eigentümer erhält die doppelte Miete. Wenn noch niemand diesen Bahnhof besitzt, kannst du ihn kaufen.", "move_special"),
+            new CommunityChest("Rücke vor bis zur Schlossallee", "move"),
+            new CommunityChest("Zahle 500 für jedes Haus und 2000 für jedes Hotel, das du besitzt.", "pay_special"),
+            new CommunityChest("Du wurdest zum Vorstand gewählt. Zahle jedem Spieler 1000.", "pay"),
+            new CommunityChest("Miete und Anleihezinsen werden fällig. Die Bank zahlt dir 3000.", "get"),
+            new CommunityChest("Ziehe vor bis zum Südbahnhof. Wenn du über Los kommst, ziehe 4000 ein.", "move"),
+            new CommunityChest("Die Bank zahlt dir eine Dividende von 1000.", "get"),
+            new CommunityChest("Strafe für zu schnelles Fahren. zahle 300.", "pay"),
+            new CommunityChest("Rücke bis auf Los vor.", "move"),
+    };
 
     public Player(String name, int money) {
         this.name = name;
         this.money = money;
         this.position = 0;
-        this.properties = new Buyables[22];
+        properties = new ArrayList<>();
         doubles = 0;
         cFree = false;
         ccFree = false;
     }
 
     public void move() {
-        int r1 = (int) (Math.random() * 6);
-        int r2 = (int) (Math.random() * 6);
+        int r1 = 1 + (int) (Math.random() * 6);
+        int r2 = 1 + (int) (Math.random() * 6);
 
         this.position += (r1 + r2);
         if (this.position > 39) {
             this.position -= 40;
         }
 
+        System.out.println(name + " rolled " + r1 + " and " + r2);
+        Main.display(this);
+        
         if (r1 == r2) {
             this.doubles++;
             if (doubles == 3) {
@@ -43,10 +87,12 @@ public class Player {
         }
     }
     public void chance() {
-        //TODO
+        int r = (int) (Math.random() * 16);
+        chanceCards[r].doEffect(this);
     }
     public void communityChest() {
-        //TODO
+        int r = (int) (Math.random() * 16);
+        communityChestCards[r].doEffect(this);
     }
     public void changeMoney(int amount, boolean add) {
         if (add) {this.money += amount;}
@@ -65,6 +111,18 @@ public class Player {
     }
     public void setCCFree(boolean input) {this.ccFree = input;}
     public void setCFree(boolean input) {this.cFree = input;}
-    public Buyables[] getProperties() {return this.properties;}
-
+    public ArrayList<Buyables> getProperties() {return this.properties;}
+    public void buy(Buyables property, Player seller, int cost) {
+        this.changeMoney(cost, false);
+        properties.add(property);
+        if (seller != null) {
+            seller.removeProperty(property);
+            seller.changeMoney(cost, true);
+        }
+    }
+    public void removeProperty(Buyables property) {
+        properties.remove(property);
+    }
+    public String getName() {return this.name;}
+    public int getMoney() {return this.money;}
 }

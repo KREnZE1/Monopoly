@@ -1,5 +1,7 @@
 package Game.Buyables;
 
+import Game.Player;
+
 public class Street extends Buyables {
     String name;
     int basePrice;
@@ -28,22 +30,20 @@ public class Street extends Buyables {
     public int getHousePrice() {
         return housePrice;
     }
-
     public int getHouses() {
         return houses;
     }
-
     public String getName() {
         return name;
     }
-
     public int getBasePrice() {
         return basePrice;
     }
-
     public String getGroup() {
         return group;
     }
 
-
+    public void action(Player player) {
+        //TODO: Implement buying the property
+    }
 }

@@ -9,7 +9,7 @@ public class Event extends Location {
         this.group = group;
     }
 
-    public void doEffect(Player player) {
+    public void action(Player player) {
         switch (group) {
             case "Chance" -> player.chance();
             case "Community Chest" -> player.communityChest();
@@ -18,6 +18,10 @@ public class Event extends Location {
             case "to_prison" -> player.position = 40;
             case "get4k" -> player.changeMoney(4000, true);
         }
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

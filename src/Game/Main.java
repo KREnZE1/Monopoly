@@ -5,9 +5,12 @@ import Game.Buyables.Street;
 import Game.Cards.Chance;
 import Game.Cards.CommunityChest;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 
 public class Main {
-
+    static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     static Location[] board;
     static Player[] players;
     static Chance[] chanceCards;
@@ -15,6 +18,9 @@ public class Main {
 
     public static void main(String[] args) {
         setup();
+        for (int i=0; i<10; i++) {
+            round();
+        }
     }
 
     public static void setup() {
@@ -64,44 +70,21 @@ public class Main {
 
         players = new Player[]{
                 new Player("Player 1", 5000),
-        };
-
-        chanceCards = new Chance[]{
-            new Chance("Du hast den 2. Preis in einer Schönheitskonkurrenz gewonnen. Ziehe 200 ein."),
-            new Chance("Du hast in einem Kreuzworträtsel gewonnen. Ziege 2000 ein."),
-            new Chance("Einkommenssteuer-Rückzahlung. Ziehe 400 ein."),
-            new Chance("Zahle 3000 Schulgeld."),
-            new Chance("Rücke vor bis auf Los."),
-            new Chance("Arztkosten. Zahle 1000."),
-            new Chance("Die Jahresrente wird fällig. Ziehe 2000 ein."),
-            new Chance("Gehe in das Gefängnis. Begib dich direkt dorthin. Gehe nicht über Los. Ziehe nicht 4000 ein."),
-            new Chance("Zahle 800 pro Haus und 2300 pro Hotel, das du besitzt."),
-            new Chance("Du erhältst auf Aktien Dividende. Ziehe 900 ein."),
-            new Chance("Du erbst 2000."),
-            new Chance("Aus Lagerverkäufen erhältst du 500."),
-            new Chance("Zahle 2000 an das Krankenhaus."),
-            new Chance("Du kommst aus dem Gefängnis frei. Behalte diese Karte, bis du sie verwendest oder verkaufst."),
-            new Chance("Es ist dein Geburtstag. Ziehe 1000 von jedem Spieler ein."),
-            new Chance("Bank-Irrtum. Ziehe 4000 ein."),
-        };
-
-        communityChestCards = new CommunityChest[]{
-            new CommunityChest("Rücke vor bis zum Opernplatz. Wenn du über Los kommst, ziehe 4000 ein.", "move"),
-            new CommunityChest("Rücke vor bis zur Seestraße. Wenn du über Los kommst, ziehe 4000 ein.", "move"),
-            new CommunityChest("Gehe zurück zur Badstraße.", "move"),
-            new CommunityChest("Zahle eine Strafe von 200 oder nimm eine Gemeinschaftskarte.", "pay"),
-            new CommunityChest("Gehe 3 Felder zurück.", "move"),
-            new CommunityChest("Du kommst aus dem Gefängnis frei. Behalte diese Karte, bis du sie verwendest oder verkaufst.", "prison_free"),
-            new CommunityChest("Gehe in das Gefängnis. Begib dich direkt dorthin. Gehe nicht über Los. Ziehe nicht 4000 ein.", "move"),
-            new CommunityChest("Rücke vor bis zum nächsten Bahnhof. Der Eigentümer erhält die doppelte Miete. Wenn noch niemand diesen Bahnhof besitzt, kannst du ihn kaufen.", "move_special"),
-            new CommunityChest("Rücke vor bis zur Schlossallee", "move"),
-            new CommunityChest("Zahle 500 für jedes Haus und 2000 für jedes Hotel, das du besitzt.", "pay_special"),
-            new CommunityChest("Du wurdest zum Vorstand gewählt. Zahle jedem Spieler 1000.", "pay"),
-            new CommunityChest("Miete und Anleihezinsen werden fällig. Die Bank zahlt dir 3000.", "get"),
-            new CommunityChest("Ziehe vor bis zum Südbahnhof. Wenn du über Los kommst, ziehe 4000 ein.", "move"),
-            new CommunityChest("Die Bank zahlt dir eine Dividende von 1000.", "get"),
-            new CommunityChest("Strafe für zu schnelles Fahren. zahle 300.", "pay"),
-            new CommunityChest("Rücke bis auf Los vor.", "move"),
+                new Player("Player 2", 10000),
         };
     }
+
+    public static void round(){
+        for (Player player : players) {
+            player.move();
+            //board[player.getPosition()].action(player);
+        }
+    }
+
+    public static Player[] getPlayers() {return players;}
+
+    public static void display(Player player) {
+        System.out.println("Spieler: " + player.getName() + " | Geld: " + player.getMoney() + " | Position: " + board[player.getPosition()].getName());
+    }
+
 }
