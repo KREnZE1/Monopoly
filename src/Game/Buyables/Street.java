@@ -55,6 +55,7 @@ public class Street extends Buyables {
                 if (Main.getConfirmation("Do you want to buy " + this.name + " for $" + this.basePrice + "? You have $" + player.getMoney())) {
                     player.buy(this, null, this.basePrice);
                 }
+                else Main.auction(this);
             } else {
                 System.out.println("You don't have enough money to buy a house");
             }

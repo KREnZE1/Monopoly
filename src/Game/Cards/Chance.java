@@ -26,14 +26,14 @@ public class Chance {
             case "pay" -> {
                 p = Pattern.compile("\\d0{2,3}");
                 m = p.matcher(effect);
-                amount = Integer.parseInt(m.group());
+                if (m.find()) amount = Integer.parseInt(m.group());
                 player.changeMoney(amount, false);
                 System.out.println("You paid $" + amount);
             }
             case "get" -> {
                 p = Pattern.compile("\\d0{2,3}");
                 m = p.matcher(effect);
-                amount = Integer.parseInt(m.group());
+                if (m.find()) amount = Integer.parseInt(m.group());
                 player.changeMoney(amount, true);
                 System.out.println("You received $" + amount);
             }

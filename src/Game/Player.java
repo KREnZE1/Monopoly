@@ -4,6 +4,8 @@ import Game.Buyables.Buyables;
 import Game.Cards.Chance;
 import Game.Cards.CommunityChest;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Player {
@@ -14,6 +16,8 @@ public class Player {
     int doubles;
     boolean ccFree;
     boolean cFree;
+
+    static boolean loop;
 
     // region Cards
     static Chance[] chanceCards = new Chance[] {
@@ -86,21 +90,26 @@ public class Player {
 
     // section Other
     public void move() {
-        int r1 = 1 + (int) (Math.random() * 6);
-        int r2 = 1 + (int) (Math.random() * 6);
-
-        this.position += (r1 + r2);
+            int r1 = 1 + (int) (Math.random() * 6);
+            int r2 = 1 + (int) (Math.random() * 6);
+            System.out.println(name + " rolled " + r1 + " and " + r2);
+            moveAhead(r1 + r2);
+            checkDoubles(r1, r2);
+    }
+    public void moveAhead(int steps) {
+        this.position += steps;
         if (this.position > 39) {
             this.position -= 40;
         }
-
-        System.out.println(name + " rolled " + r1 + " and " + r2);
-        
-        if (r1 == r2) {
+    }
+    public void checkDoubles(int x, int y) {
+        if (x == y) {
             this.doubles++;
             if (doubles == 3) {
                 this.position = 40;
             }
+            Main.board[this.getPosition()].action(this);
+            this.doAction();
             move();
         } else {
             this.doubles = 0;
@@ -132,6 +141,68 @@ public class Player {
     }
     public void removeProperty(Buyables property) {
         properties.remove(property);
+    }
+    public void imprisoned() {
+        System.out.println("You are in prison.");
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            loop = true;
+            while (loop) {
+                if (doubles >= 3) {
+                    doubles = 0;
+                    System.out.println("YOu couldn't free yourself. Now you need to pay");
+                    this.changeMoney(50, false);
+                    move();
+                    break;
+                }
+
+                System.out.println("How do you want to free yourself?");
+                System.out.println("1. Pay $50 to get out of prison.");
+                System.out.println("2. Use a card from your hand.");
+                System.out.println("3. Roll");
+                String input = br.readLine();
+                switch (input) {
+                    case "1" -> {
+                        this.changeMoney(50, false);
+                        loop = false;
+                    }
+                    case "2" -> {
+                        if (this.ccFree) {
+                            this.ccFree = false;
+                            loop = false;
+                        } else if (this.cFree) {
+                            this.cFree = false;
+                            loop = false;
+                        } else System.out.println("You have no card to free yourself from prison");
+                    }
+                    case "3" -> {
+                        loop = false;
+                        if (doubles >= 3) {
+                            doubles = 0;
+                            System.out.println("Du hast dich nicht befreien können. Nun musst du bezahlen.");
+                            this.changeMoney(50, false);
+                            move();
+                            break;
+                        }
+                        int r1 = (int) (Math.random()*6)+1;
+                        int r2 = (int) (Math.random()*6)+1;
+                        System.out.println("You rolled a " + r1 + " and " + r2);
+                        if (!(r1 == r2)) doubles++;
+                        else {
+                            doubles = 0;
+                            moveAhead(r1+r2);
+                            checkDoubles(r1,r2);
+                        }
+                    }
+                    default -> System.out.println("Invalid input, please enter 1, 2 or 3");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error encountered");
+        }
+    }
+    public void doAction() {
+
     }
 
 }

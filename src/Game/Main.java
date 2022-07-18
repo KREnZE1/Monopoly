@@ -1,5 +1,6 @@
 package Game;
 
+import Game.Buyables.Buyables;
 import Game.Buyables.Pairings;
 import Game.Buyables.Street;
 import Game.Cards.Chance;
@@ -11,8 +12,8 @@ import java.io.InputStreamReader;
 
 
 public class Main {
-    static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    static Location[] board;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static Location[] board;
     static Player[] players;
     static Chance[] chanceCards;
     static CommunityChest[] communityChestCards;
@@ -77,9 +78,11 @@ public class Main {
 
     public static void round() throws InterruptedException{
         for (Player player : players) {
-            player.move();
+            if (player.getPosition() == 40) player.imprisoned();
+            else player.move();
             board[player.getPosition()].action(player);
             display(player);
+            player.doAction();
             Thread.sleep(1000);
         }
     }
@@ -94,7 +97,7 @@ public class Main {
         System.out.println(message);
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            String input = "";
+            String input;
             do {
                 System.out.print("[Y/N]: ");
                 input = br.readLine().strip().toUpperCase();
@@ -106,5 +109,35 @@ public class Main {
         System.out.println("Ein Fehler ist aufgetreten");
         return false;
     }
+
+    public static void auction(Buyables property) {
+        int highestBid = (int) Math.ceil(property.getBasePrice()*0.5);
+        Player highestBidder = null;
+        int bidders = players.length;
+        while (bidders > 1) {
+            bidders = players.length;
+            for (Player player : players) {
+                System.out.println(player.getName() + ": " + player.getMoney() + " | " + highestBid + " | What do you want to bid?");
+                System.out.println("If your bid is not a number or lower than the highest bid you won't bid in this round");
+                try {
+                    String input = br.readLine().strip();
+                    if (Integer.parseInt(input) > highestBid) {
+                        highestBid = Integer.parseInt(input);
+                        highestBidder = player;
+                    }
+                    else bidders -= 1;
+                } catch (NumberFormatException nfe) {
+                    bidders -= 1;
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        }
+        if (highestBidder == null) {
+            System.out.println("No one bid on this property");
+            return;
+        }
+        System.out.println(highestBidder.getName() + " bought the property for $" + highestBid);
+
+    }
 }
-//TODO: Nach einem Pasch kann der Spieler momentan nicht kaufen, erst auf dem Feld, auf dem er am Ende landet
