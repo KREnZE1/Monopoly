@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="userlib">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../../../Program Files/BlueJ/lib/userlib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/../../../../Program Files/BlueJ/lib/userlib" recursive="false" />
+  </library>
+</component>

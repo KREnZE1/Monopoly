@@ -3,7 +3,6 @@ package Game;
 import Game.Buyables.Buyables;
 import Game.Cards.Chance;
 import Game.Cards.CommunityChest;
-import javafx.beans.property.Property;
 
 import java.util.ArrayList;
 
@@ -16,6 +15,7 @@ public class Player {
     boolean ccFree;
     boolean cFree;
 
+    // region Cards
     static Chance[] chanceCards = new Chance[] {
             new Chance("Du hast den 2. Preis in einer Schönheitskonkurrenz gewonnen. Ziehe 200 ein.", "get"),
             new Chance("Du hast in einem Kreuzworträtsel gewonnen. Ziege 2000 ein.", "get"),
@@ -53,7 +53,9 @@ public class Player {
             new CommunityChest("Strafe für zu schnelles Fahren. zahle 300.", "pay"),
             new CommunityChest("Rücke bis auf Los vor.", "move"),
     };
+    // endregion
 
+    // section Constructor
     public Player(String name, int money) {
         this.name = name;
         this.money = money;
@@ -64,6 +66,25 @@ public class Player {
         ccFree = false;
     }
 
+    // section Getter & Setter
+    public void setPosition(int position, boolean forward) {
+        if (forward && this.position > position) {
+            this.position = position;
+            changeMoney(4000, true);
+        } else {
+            this.position = position;
+        }
+    }
+    public int getPosition() {
+        return this.position;
+    }
+    public void setCCFree(boolean input) {this.ccFree = input;}
+    public void setCFree(boolean input) {this.cFree = input;}
+    public ArrayList<Buyables> getProperties() {return this.properties;}
+    public String getName() {return this.name;}
+    public int getMoney() {return this.money;}
+
+    // section Other
     public void move() {
         int r1 = 1 + (int) (Math.random() * 6);
         int r2 = 1 + (int) (Math.random() * 6);
@@ -74,7 +95,6 @@ public class Player {
         }
 
         System.out.println(name + " rolled " + r1 + " and " + r2);
-        Main.display(this);
         
         if (r1 == r2) {
             this.doubles++;
@@ -97,21 +117,11 @@ public class Player {
     public void changeMoney(int amount, boolean add) {
         if (add) {this.money += amount;}
         else {this.money -= amount;}
-    }
-    public void setPosition(int position, boolean forward) {
-        if (forward && this.position > position) {
-            this.position = position;
-            changeMoney(4000, true);
-        } else {
-            this.position = position;
+        if (this.money < 0) {
+            //TODO: Implement player removal due to insufficient cash
+            //TODO: Implement paying in properties if the player has no cash
         }
     }
-    public int getPosition() {
-        return this.position;
-    }
-    public void setCCFree(boolean input) {this.ccFree = input;}
-    public void setCFree(boolean input) {this.cFree = input;}
-    public ArrayList<Buyables> getProperties() {return this.properties;}
     public void buy(Buyables property, Player seller, int cost) {
         this.changeMoney(cost, false);
         properties.add(property);
@@ -123,6 +133,5 @@ public class Player {
     public void removeProperty(Buyables property) {
         properties.remove(property);
     }
-    public String getName() {return this.name;}
-    public int getMoney() {return this.money;}
+
 }

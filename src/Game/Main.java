@@ -6,6 +6,7 @@ import Game.Cards.Chance;
 import Game.Cards.CommunityChest;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 
@@ -16,7 +17,7 @@ public class Main {
     static Chance[] chanceCards;
     static CommunityChest[] communityChestCards;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException{
         setup();
         for (int i=0; i<10; i++) {
             round();
@@ -27,7 +28,7 @@ public class Main {
         board = new Location[]{
                 new Event("Los", "get4k"), //Go
                 new Street("Badstraße", 1200, new int[]{40, 200, 600, 1800, 3200, 5000}, 1000, "dunkellila"),
-                new Event("Gemeinschaftsfeld", "communityChest"),
+                new Event("Gemeinschaftsfeld", "community_chest"),
                 new Street("Turmstraße", 1200, new int[]{80, 400, 1200, 3600, 6400, 9000}, 1000, "dunkellila"),
                 new Event("Einkommenssteuer", "pay4k"), //Einkommenssteuer
                 new Pairings("Südbahnhof", 4000, new int[]{500, 1000, 2000, 4000}, "Train_Station"), //Südbahnhof
@@ -74,10 +75,12 @@ public class Main {
         };
     }
 
-    public static void round(){
+    public static void round() throws InterruptedException{
         for (Player player : players) {
             player.move();
-            //board[player.getPosition()].action(player);
+            board[player.getPosition()].action(player);
+            display(player);
+            Thread.sleep(1000);
         }
     }
 
@@ -87,4 +90,21 @@ public class Main {
         System.out.println("Spieler: " + player.getName() + " | Geld: " + player.getMoney() + " | Position: " + board[player.getPosition()].getName());
     }
 
+    public static boolean getConfirmation(String message) {
+        System.out.println(message);
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            String input = "";
+            do {
+                System.out.print("[Y/N]: ");
+                input = br.readLine().strip().toUpperCase();
+            } while (!input.equals("Y") && !input.equals("N"));
+            return input.equals("Y");
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+        System.out.println("Ein Fehler ist aufgetreten");
+        return false;
+    }
 }
+//TODO: Nach einem Pasch kann der Spieler momentan nicht kaufen, erst auf dem Feld, auf dem er am Ende landet

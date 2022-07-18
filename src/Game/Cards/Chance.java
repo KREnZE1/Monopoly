@@ -28,16 +28,27 @@ public class Chance {
                 m = p.matcher(effect);
                 amount = Integer.parseInt(m.group());
                 player.changeMoney(amount, false);
+                System.out.println("You paid $" + amount);
             }
             case "get" -> {
                 p = Pattern.compile("\\d0{2,3}");
                 m = p.matcher(effect);
                 amount = Integer.parseInt(m.group());
                 player.changeMoney(amount, true);
+                System.out.println("You received $" + amount);
             }
-            case "move" -> player.setPosition(0, true);
-            case "prison" -> player.setPosition(40, false);
-            case "prison_free" -> player.setCFree(true);
+            case "move" -> {
+                player.setPosition(0, true);
+                System.out.println("You moved to Go");
+            }
+            case "prison" -> {
+                player.setPosition(40, false);
+                System.out.println("You are now in prison");
+            }
+            case "prison_free" -> {
+                player.setCFree(true);
+                System.out.println("You received a Get Out of Jail Free card");
+            }
             case "pay_special" -> {
                 int houses = 0;
                 int hotels = 0;
@@ -52,6 +63,7 @@ public class Chance {
                     }
                 }
                 player.changeMoney(houses * 500 + hotels * 2000, false);
+                System.out.println("You paid $" + (houses * 500 + hotels * 2000) + " for " + houses + " houses and " + hotels + " hotels");
             }
             case "get_special" -> {
                 Player[] players = Main.getPlayers();
@@ -62,6 +74,7 @@ public class Chance {
                         player1.changeMoney(1000, false);
                     }
                 }
+                System.out.println("You received $1000 from each player");
             }
         }
     }
