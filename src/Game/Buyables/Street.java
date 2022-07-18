@@ -46,7 +46,7 @@ public class Street extends Buyables {
     public void addHouse() {
         houses++;
     }
-    public int getRent() {
+    public int getCurrPrice() {
         return rent[houses];
     }
     public void action(Player player) {
@@ -63,8 +63,8 @@ public class Street extends Buyables {
             if (this.getOwner() == player) {
                 System.out.println("You own this property");
             } else {
-                this.getOwner().changeMoney(this.getRent(), true);
-                player.changeMoney(this.getRent(), false);
+                this.getOwner().changeMoney(this.getCurrPrice(), true);
+                player.changeMoney(this.getCurrPrice(), false);
             }
         }
     }

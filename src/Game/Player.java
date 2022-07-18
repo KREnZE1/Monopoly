@@ -1,10 +1,12 @@
 package Game;
 
 import Game.Buyables.Buyables;
+import Game.Buyables.Street;
 import Game.Cards.Chance;
 import Game.Cards.CommunityChest;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -150,7 +152,7 @@ public class Player {
             while (loop) {
                 if (doubles >= 3) {
                     doubles = 0;
-                    System.out.println("YOu couldn't free yourself. Now you need to pay");
+                    System.out.println("You couldn't free yourself. Now you need to pay");
                     this.changeMoney(50, false);
                     move();
                     break;
@@ -202,7 +204,55 @@ public class Player {
         }
     }
     public void doAction() {
-
+        while (Main.getConfirmation("Do you want to do something?") && !properties.isEmpty()) {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("1. Do you want to check your properties?");
+            System.out.println("2. Do you want to build houses/hotels?");
+            String input = "";
+            try {
+                while (!((input = bufferedReader.readLine()).equals("1") || input.equals("2"))) {
+                    System.out.println("Invalid input, please enter 1 or 2");
+                }
+                if (input.equals("1")) {
+                    this.checkProperties();
+                } else {
+                    this.build();
+                }
+            } catch (Exception e) {
+                System.err.println("Error encountered with the player doing an action after their turn");
+            }
+        }
     }
 
+    private void build() {
+        System.out.println("Which property do you want to build houses/a hotel on?");
+        loop = true;
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        while (loop) {
+            try {
+                String input = bufferedReader.readLine();
+                for (Buyables property : properties) {
+                    if (property.getName().equals(input) && (property instanceof Street) && ((Street) property).getHouses() < 4) {
+                        loop = false;
+                        this.changeMoney(((Street) property).getHousePrice(), false);
+                        ((Street) property).addHouse();
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Error encountered");
+            }
+        }
+    }
+
+    private void checkProperties() {
+        System.out.println("You own the following properties:");
+        for (Buyables property : properties) {
+            if (property instanceof Street) {
+                System.out.println(property.getName() + " with " + ((Street) property).getHouses() + " houses");
+            } else {
+                System.out.println(property.getName());
+            }
+            System.out.println("The rent is currently $" + property.getCurrPrice());
+        }
+    }
 }

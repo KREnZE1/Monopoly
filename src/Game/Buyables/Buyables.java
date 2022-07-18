@@ -11,9 +11,9 @@ public abstract class Buyables extends Location {
     Player owner;
 
 
-    public abstract int getHouses();
     public abstract String getName();
     public abstract int getBasePrice();
+    public abstract int getCurrPrice();
     public abstract Player getOwner();
     public abstract void action(Player player);
 }

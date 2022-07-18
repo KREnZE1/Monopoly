@@ -1,6 +1,7 @@
 package Game.Cards;
 
 import Game.Buyables.Buyables;
+import Game.Buyables.Street;
 import Game.Main;
 import Game.Player;
 
@@ -54,11 +55,11 @@ public class Chance {
                 int hotels = 0;
                 ArrayList<Buyables> properties = player.getProperties();
                 for (Buyables property : properties) {
-                    if (property != null) {
-                        if (property.getHouses() == 5) {
+                    if (property instanceof Street) {
+                        if (((Street) property).getHouses() == 5) {
                             hotels++;
                         } else {
-                            houses += property.getHouses();
+                            houses += ((Street) property).getHouses();
                         }
                     }
                 }

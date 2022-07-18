@@ -17,9 +17,6 @@ public class Pairings extends Buyables {
         this.group = group;
     }
 
-    public int getHouses() {
-        return 0;
-    }
     public String getName() {return this.name;}
     public int getBasePrice() {return this.basePrice;}
     public int getCurrPrice() {return 0;}
@@ -44,3 +41,4 @@ public class Pairings extends Buyables {
         }
     }
 }
+//TODO: Implement calculation of the current rent
