@@ -11,9 +11,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Player {
-    String name;
+    final String name;
     int money;
     int position;
+    @SuppressWarnings("CanBeFinal")
     ArrayList<Buyables> properties;
     int doubles;
     boolean ccFree;
@@ -22,7 +23,7 @@ public class Player {
     static boolean loop;
 
     // region Cards
-    static Chance[] chanceCards = new Chance[] {
+    final static Chance[] chanceCards = new Chance[] {
             new Chance("Du hast den 2. Preis in einer Schönheitskonkurrenz gewonnen. Ziehe 200 ein.", "get"),
             new Chance("Du hast in einem Kreuzworträtsel gewonnen. Ziege 2000 ein.", "get"),
             new Chance("Einkommenssteuer-Rückzahlung. Ziehe 400 ein.", "get"),
@@ -41,7 +42,7 @@ public class Player {
             new Chance("Bank-Irrtum. Ziehe 4000 ein.", "get"),
     };
 
-    static CommunityChest[] communityChestCards = new CommunityChest[] {
+    final static CommunityChest[] communityChestCards = new CommunityChest[] {
             new CommunityChest("Rücke vor bis zum Opernplatz. Wenn du über Los kommst, ziehe 4000 ein.", "move"),
             new CommunityChest("Rücke vor bis zur Seestraße. Wenn du über Los kommst, ziehe 4000 ein.", "move"),
             new CommunityChest("Gehe zurück zur Badstraße.", "move"),
@@ -76,7 +77,7 @@ public class Player {
     public void setPosition(int position, boolean forward) {
         if (forward && this.position > position) {
             this.position = position;
-            changeMoney(4000, true);
+            changeMoney(4000);
         } else {
             this.position = position;
         }
@@ -90,13 +91,11 @@ public class Player {
     public String getName() {return this.name;}
     public int getMoney() {return this.money;}
 
-    // section Other
+    // section Movement
     public void move() {
-            int r1 = 1 + (int) (Math.random() * 6);
-            int r2 = 1 + (int) (Math.random() * 6);
-            System.out.println(name + " rolled " + r1 + " and " + r2);
-            moveAhead(r1 + r2);
-            checkDoubles(r1, r2);
+            int[] r = Main.rollDice();
+            moveAhead(r[0] + r[1]);
+            checkDoubles(r[0], r[1]);
     }
     public void moveAhead(int steps) {
         this.position += steps;
@@ -117,33 +116,6 @@ public class Player {
             this.doubles = 0;
         }
     }
-    public void chance() {
-        int r = (int) (Math.random() * 16);
-        chanceCards[r].doEffect(this);
-    }
-    public void communityChest() {
-        int r = (int) (Math.random() * 16);
-        communityChestCards[r].doEffect(this);
-    }
-    public void changeMoney(int amount, boolean add) {
-        if (add) {this.money += amount;}
-        else {this.money -= amount;}
-        if (this.money < 0) {
-            //TODO: Implement player removal due to insufficient cash
-            //TODO: Implement paying in properties if the player has no cash
-        }
-    }
-    public void buy(Buyables property, Player seller, int cost) {
-        this.changeMoney(cost, false);
-        properties.add(property);
-        if (seller != null) {
-            seller.removeProperty(property);
-            seller.changeMoney(cost, true);
-        }
-    }
-    public void removeProperty(Buyables property) {
-        properties.remove(property);
-    }
     public void imprisoned() {
         System.out.println("You are in prison.");
         try {
@@ -153,19 +125,19 @@ public class Player {
                 if (doubles >= 3) {
                     doubles = 0;
                     System.out.println("You couldn't free yourself. Now you need to pay");
-                    this.changeMoney(50, false);
+                    this.changeMoney(-1000);
                     move();
                     break;
                 }
 
                 System.out.println("How do you want to free yourself?");
-                System.out.println("1. Pay $50 to get out of prison.");
+                System.out.println("1. Pay $1000 to get out of prison.");
                 System.out.println("2. Use a card from your hand.");
                 System.out.println("3. Roll");
                 String input = br.readLine();
                 switch (input) {
                     case "1" -> {
-                        this.changeMoney(50, false);
+                        this.changeMoney(-1000);
                         loop = false;
                     }
                     case "2" -> {
@@ -182,18 +154,16 @@ public class Player {
                         if (doubles >= 3) {
                             doubles = 0;
                             System.out.println("Du hast dich nicht befreien können. Nun musst du bezahlen.");
-                            this.changeMoney(50, false);
+                            this.changeMoney(-1000);
                             move();
                             break;
                         }
-                        int r1 = (int) (Math.random()*6)+1;
-                        int r2 = (int) (Math.random()*6)+1;
-                        System.out.println("You rolled a " + r1 + " and " + r2);
-                        if (!(r1 == r2)) doubles++;
+                        int[] r = Main.rollDice();
+                        if (!(r[0] == r[1])) doubles++;
                         else {
                             doubles = 0;
-                            moveAhead(r1+r2);
-                            checkDoubles(r1,r2);
+                            moveAhead(r[0]+r[1]);
+                            checkDoubles(r[0],r[1]);
                         }
                     }
                     default -> System.out.println("Invalid input, please enter 1, 2 or 3");
@@ -203,14 +173,47 @@ public class Player {
             System.err.println("Error encountered");
         }
     }
+
+    // section Other
+    public void chance() {
+        int r = (int) (Math.random() * 16);
+        chanceCards[r].doEffect(this);
+    }
+    public void communityChest() {
+        int r = (int) (Math.random() * 16);
+        communityChestCards[r].doEffect(this);
+    }
+    public void changeMoney(int amount, Player[] recipients) {
+        //Recipient ist der Spieler, der Geld bekommt, wenn mehrere Spieler involviert sind. In dem Fall sollte Amount negativ sein
+        for (Player player : recipients) player.changeMoney(-amount);
+        this.changeMoney(amount);
+    }
+    public void changeMoney(int amount) {
+        this.money += amount;
+        //TODO: Logic for bankruptcy
+    }
+    public void buy(Buyables property, Player seller, int cost) {
+        this.changeMoney(-cost);
+        property.setOwner(this);
+        properties.add(property);
+        if (seller != null) {
+            seller.removeProperty(property);
+            seller.changeMoney(cost);
+        }
+    }
+    public void removeProperty(Buyables property) {
+        properties.remove(property);
+    }
+
+
+    //section Action after turn
     public void doAction() {
         while (Main.getConfirmation("Do you want to do something?") && !properties.isEmpty()) {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("1. Do you want to check your properties?");
             System.out.println("2. Do you want to build houses/hotels?");
-            String input = "";
+            String input;
             try {
-                while (!((input = bufferedReader.readLine()).equals("1") || input.equals("2"))) {
+                while (!((input = Main.bufferedReader.readLine()).equals("1") || input.equals("2"))) {
                     System.out.println("Invalid input, please enter 1 or 2");
                 }
                 if (input.equals("1")) {
@@ -223,18 +226,16 @@ public class Player {
             }
         }
     }
-
     private void build() {
         System.out.println("Which property do you want to build houses/a hotel on?");
         loop = true;
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         while (loop) {
             try {
-                String input = bufferedReader.readLine();
+                String input = Main.bufferedReader.readLine();
                 for (Buyables property : properties) {
                     if (property.getName().equals(input) && (property instanceof Street) && ((Street) property).getHouses() < 4) {
                         loop = false;
-                        this.changeMoney(((Street) property).getHousePrice(), false);
+                        this.changeMoney(-((Street) property).getHousePrice());
                         ((Street) property).addHouse();
                     }
                 }
@@ -243,7 +244,6 @@ public class Player {
             }
         }
     }
-
     private void checkProperties() {
         System.out.println("You own the following properties:");
         for (Buyables property : properties) {

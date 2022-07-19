@@ -3,11 +3,12 @@ package Game.Buyables;
 import Game.Main;
 import Game.Player;
 
+
 public class Pairings extends Buyables {
-    String name;
-    int basePrice;
-    int[] rent;
-    String group;
+    final String name;
+    final int basePrice;
+    final int[] rent;
+    final String group;
     Player owner;
 
     public Pairings(String name, int basePrice, int[] rent, String group) {
@@ -18,9 +19,33 @@ public class Pairings extends Buyables {
     }
 
     public String getName() {return this.name;}
+    public String getGroup() {return this.group;}
     public int getBasePrice() {return this.basePrice;}
-    public int getCurrPrice() {return 0;}
+    public int getCurrPrice() {
+        int price = 0;
+        if (this.getGroup().equals("Train_Station")) {
+            int counter = 0;
+            if (this.getOwner().getProperties().contains(Main.getBoard()[5])) {
+                counter++;
+            } if (this.getOwner().getProperties().contains(Main.getBoard()[15])) {
+                counter++;
+            } if (this.getOwner().getProperties().contains(Main.getBoard()[25])) {
+                counter++;
+            } if (this.getOwner().getProperties().contains(Main.getBoard()[35])) {
+                counter++;
+            }
+            price = this.rent[counter];
+        } else if (this.getGroup().equals("Werk")) {
+            if (this.getOwner().getProperties().contains(Main.getBoard()[12]) && this.getOwner().getProperties().contains(Main.getBoard()[28])) {
+                price = this.rent[1];
+            } else {
+                price = this.rent[0];
+            }
+        } else System.err.println("Fehlerhafter Gruppenname bei " + this.getName());
+        return price;
+    }
     public Player getOwner() {return this.owner;}
+    public void setOwner(Player owner) {this.owner = owner;}
     public void action(Player player) {
         if (this.getOwner() == null) {
             if (player.getMoney() >= basePrice) {
@@ -34,11 +59,9 @@ public class Pairings extends Buyables {
             if (this.getOwner() == player) {
                 System.out.println("You own this property");
             } else {
-                this.getOwner().changeMoney(this.getCurrPrice(), true);
-                player.changeMoney(this.getCurrPrice(), false);
+                player.changeMoney(-this.getCurrPrice(), new Player[]{this.getOwner()});
                 System.out.println("You paid $" + this.getCurrPrice() + " to " + this.getOwner().getName());
             }
         }
     }
 }
-//TODO: Implement calculation of the current rent

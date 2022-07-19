@@ -4,12 +4,12 @@ import Game.Main;
 import Game.Player;
 
 public class Street extends Buyables {
-    String name;
-    int basePrice;
-    int[] rent;
-    int housePrice;
+    final String name;
+    final int basePrice;
+    final int[] rent;
+    final int housePrice;
     int houses;
-    String group;
+    final String group;
     Player owner;
 
     // section Constructor
@@ -41,6 +41,7 @@ public class Street extends Buyables {
     public Player getOwner() {
         return this.owner;
     }
+    public void setOwner(Player owner) {this.owner = owner;}
 
     // section Other
     public void addHouse() {
@@ -63,8 +64,8 @@ public class Street extends Buyables {
             if (this.getOwner() == player) {
                 System.out.println("You own this property");
             } else {
-                this.getOwner().changeMoney(this.getCurrPrice(), true);
-                player.changeMoney(this.getCurrPrice(), false);
+                player.changeMoney(-this.getCurrPrice(), new Player[]{this.getOwner()});
+                System.out.println(player.getName() + " paid $" + this.getCurrPrice() + " to " + this.getOwner().getName() + " because " + this.getOwner().getName() + " owns " + this.getName());
             }
         }
     }

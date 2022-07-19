@@ -10,8 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Chance {
-    String effect;
-    String shorthand;
+    final String effect;
+    final String shorthand;
 
     Pattern p;
     Matcher m;
@@ -28,14 +28,14 @@ public class Chance {
                 p = Pattern.compile("\\d0{2,3}");
                 m = p.matcher(effect);
                 if (m.find()) amount = Integer.parseInt(m.group());
-                player.changeMoney(amount, false);
+                player.changeMoney(-amount);
                 System.out.println("You paid $" + amount);
             }
             case "get" -> {
                 p = Pattern.compile("\\d0{2,3}");
                 m = p.matcher(effect);
                 if (m.find()) amount = Integer.parseInt(m.group());
-                player.changeMoney(amount, true);
+                player.changeMoney(amount);
                 System.out.println("You received $" + amount);
             }
             case "move" -> {
@@ -63,18 +63,13 @@ public class Chance {
                         }
                     }
                 }
-                player.changeMoney(houses * 500 + hotels * 2000, false);
+                player.changeMoney(-(houses * 500 + hotels * 2000));
                 System.out.println("You paid $" + (houses * 500 + hotels * 2000) + " for " + houses + " houses and " + hotels + " hotels");
             }
             case "get_special" -> {
-                Player[] players = Main.getPlayers();
-                for (Player player1 : players) {
-                    if (player1.equals(player)) {
-                        player.changeMoney((players.length - 1) * 1000, true);
-                    } else {
-                        player1.changeMoney(1000, false);
-                    }
-                }
+                //Get 1000 from every player
+                player.changeMoney(1000, Main.getPlayers());
+                for (int i=0; i<Main.getPlayers().length-1; i++) player.changeMoney(1000);
                 System.out.println("You received $1000 from each player");
             }
         }

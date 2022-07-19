@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.regex.*;
 
 public class CommunityChest {
-    String effect;
-    String shorthand;
+    final String effect;
+    final String shorthand;
 
     Pattern p;
     Matcher m;
@@ -26,14 +26,14 @@ public class CommunityChest {
                 p = Pattern.compile("\\d0{2,3}");
                 m = p.matcher(effect);
                 if (m.find()) amount = Integer.parseInt(m.group());
-                player.changeMoney(amount, false);
+                player.changeMoney(-amount);
                 System.out.println("You paid $" + amount);
             }
             case "get" -> {
                 p = Pattern.compile("\\d0{2,3}");
                 m = p.matcher(effect);
                 if (m.find()) amount = Integer.parseInt(m.group());
-                player.changeMoney(amount, true);
+                player.changeMoney(amount);
                 System.out.println("You received $" + amount);
             }
             case "move" -> {
@@ -84,7 +84,7 @@ public class CommunityChest {
                         }
                     }
                 }
-                player.changeMoney(houses*500 + hotels*2000, false);
+                player.changeMoney(-(houses*500 + hotels*2000));
                 System.out.println("You paid $" + (houses*500 + hotels*2000) + " for " + houses + " houses and " + hotels + " hotels");
             }
             case "move_special" -> {

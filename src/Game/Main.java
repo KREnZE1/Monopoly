@@ -3,8 +3,6 @@ package Game;
 import Game.Buyables.Buyables;
 import Game.Buyables.Pairings;
 import Game.Buyables.Street;
-import Game.Cards.Chance;
-import Game.Cards.CommunityChest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,11 +10,10 @@ import java.io.InputStreamReader;
 
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    @SuppressWarnings("CanBeFinal")
+    public static BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
     public static Location[] board;
     static Player[] players;
-    static Chance[] chanceCards;
-    static CommunityChest[] communityChestCards;
 
     public static void main(String[] args) throws InterruptedException{
         setup();
@@ -88,6 +85,7 @@ public class Main {
     }
 
     public static Player[] getPlayers() {return players;}
+    public static Location[] getBoard() {return board;}
 
     public static void display(Player player) {
         System.out.println("Spieler: " + player.getName() + " | Geld: " + player.getMoney() + " | Position: " + board[player.getPosition()].getName());
@@ -96,11 +94,10 @@ public class Main {
     public static boolean getConfirmation(String message) {
         System.out.println(message);
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String input;
             do {
                 System.out.print("[Y/N]: ");
-                input = br.readLine().strip().toUpperCase();
+                input = bufferedReader.readLine().strip().toUpperCase();
             } while (!input.equals("Y") && !input.equals("N"));
             return input.equals("Y");
         } catch (IOException e) {
@@ -120,7 +117,7 @@ public class Main {
                 System.out.println(player.getName() + ": " + player.getMoney() + " | " + highestBid + " | What do you want to bid?");
                 System.out.println("If your bid is not a number or lower than the highest bid you won't bid in this round");
                 try {
-                    String input = br.readLine().strip();
+                    String input = bufferedReader.readLine().strip();
                     if (Integer.parseInt(input) > highestBid) {
                         highestBid = Integer.parseInt(input);
                         highestBidder = player;
@@ -139,5 +136,13 @@ public class Main {
         }
         System.out.println(highestBidder.getName() + " bought the property for $" + highestBid);
 
+    }
+
+    public static int[] rollDice() {
+        int[] dice = new int[2];
+        dice[0] = (int) (Math.random() * 6) + 1;
+        dice[1] = (int) (Math.random() * 6) + 1;
+        System.out.println("You rolled a " + dice[0] + " and a " + dice[1]);
+        return dice;
     }
 }

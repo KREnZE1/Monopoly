@@ -1,12 +1,6 @@
 package Game;
 
-import Game.Buyables.Buyables;
-import Game.Buyables.Pairings;
 import Game.Buyables.Street;
-import Game.Cards.Chance;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 public class Testing {
 
@@ -15,6 +9,12 @@ public class Testing {
                 new Player("Test", 10000),
                 new Player("Test2", 5000),
         };
-
+        players[0].buy(new Street("Test", 100, new int[] {100, 600, 700, 800, 1000}, 100, "Test"), null, 100);
+        players[0].getProperties().get(0).action(players[0]);
+        System.out.println("Spieler: " + players[0].getName() + " | Geld: " + players[0].getMoney() + " | Position: " + players[0].getPosition());
+        System.out.println("Spieler: " + players[1].getName() + " | Geld: " + players[1].getMoney() + " | Position: " + players[1].getPosition());
+        players[0].getProperties().get(0).action(players[1]);
+        System.out.println("Spieler: " + players[0].getName() + " | Geld: " + players[0].getMoney() + " | Position: " + players[0].getPosition());
+        System.out.println("Spieler: " + players[1].getName() + " | Geld: " + players[1].getMoney() + " | Position: " + players[1].getPosition());
     }
 }
