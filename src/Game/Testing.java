@@ -1,20 +1,24 @@
 package Game;
 
+import Game.Buyables.Buyables;
 import Game.Buyables.Street;
+
+import java.util.Arrays;
 
 public class Testing {
 
     public static void main(String[] args) {
-        Player[] players = new Player[] {
-                new Player("Test", 10000),
-                new Player("Test2", 5000),
-        };
-        players[0].buy(new Street("Test", 100, new int[] {100, 600, 700, 800, 1000}, 100, "Test"), null, 100);
-        players[0].getProperties().get(0).action(players[0]);
-        System.out.println("Spieler: " + players[0].getName() + " | Geld: " + players[0].getMoney() + " | Position: " + players[0].getPosition());
-        System.out.println("Spieler: " + players[1].getName() + " | Geld: " + players[1].getMoney() + " | Position: " + players[1].getPosition());
-        players[0].getProperties().get(0).action(players[1]);
-        System.out.println("Spieler: " + players[0].getName() + " | Geld: " + players[0].getMoney() + " | Position: " + players[0].getPosition());
-        System.out.println("Spieler: " + players[1].getName() + " | Geld: " + players[1].getMoney() + " | Position: " + players[1].getPosition());
+//        Main.setup();
+//        Main.getPlayer(0).buy((Buyables) Main.getBoard()[1], null, ((Street)Main.getBoard()[1]).getBasePrice());
+//        ((Street) Main.getPlayer(0).getProperties().get(0)).addHouse();
+//        ((Street) Main.getPlayer(0).getProperties().get(0)).addHouse();
+//        Main.getPlayer(1).buy((Buyables) Main.getBoard()[39], null, ((Street)Main.getBoard()[39]).getBasePrice());
+//        Main.displayAll();
+//        Main.getBoard()[39].action(Main.getPlayer(0));
+//        Main.getBoard()[39].action(Main.getPlayer(0));
+//        Main.getBoard()[39].action(Main.getPlayer(0));
+//        Main.getBoard()[39].action(Main.getPlayer(0));
+//        Main.getBoard()[39].action(Main.getPlayer(0));
+//        Main.displayAll();
     }
 }

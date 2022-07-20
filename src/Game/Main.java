@@ -4,14 +4,22 @@ import Game.Buyables.Buyables;
 import Game.Buyables.Pairings;
 import Game.Buyables.Street;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.Arrays;
 
 
 public class Main {
     @SuppressWarnings("CanBeFinal")
     public static BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+    public static BufferedWriter bufferedWriter;
+    static {
+        try {
+            bufferedWriter = new BufferedWriter(new FileWriter("output.txt", true));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static Location[] board;
     static Player[] players;
 
@@ -31,7 +39,7 @@ public class Main {
                 new Event("Einkommenssteuer", "pay4k"), //Einkommenssteuer
                 new Pairings("Südbahnhof", 4000, new int[]{500, 1000, 2000, 4000}, "Train_Station"), //Südbahnhof
                 new Street("Chausseestraße", 2000, new int[]{120, 600, 1800, 5400, 8000, 1100}, 1000, "hellblau"),
-                new Event("Ereignis", "chance"),
+                new Event("Ereignis", "event_field"),
                 new Street("Elisenstraße", 2000, new int[]{120, 600, 1800, 5400, 8000, 11000}, 1000, "hellblau"),
                 new Street("Poststraße", 2400, new int[]{160, 800, 2000, 6000, 9000, 12000}, 1000, "hellblau"),
                 new Event("Gefängnisbesuch", "none"), //Gefängnisbesuch
@@ -69,30 +77,39 @@ public class Main {
 
         players = new Player[]{
                 new Player("Player 1", 5000),
-                new Player("Player 2", 10000),
+                new Player("Player 2", 8000),
         };
+
+        try {
+            bufferedWriter.write("\n-----------------\n\n");
+        } catch (Exception e) {System.err.println(e.getMessage() + " | Exception beim Setup");}
     }
 
     public static void round() throws InterruptedException{
         for (Player player : players) {
+            Main.print("\n");
+            display(player);
             if (player.getPosition() == 40) player.imprisoned();
             else player.move();
             board[player.getPosition()].action(player);
-            display(player);
             player.doAction();
             Thread.sleep(1000);
         }
     }
 
     public static Player[] getPlayers() {return players;}
+    public static Player getPlayer(int i) {return players[i];}
     public static Location[] getBoard() {return board;}
 
     public static void display(Player player) {
-        System.out.println("Spieler: " + player.getName() + " | Geld: " + player.getMoney() + " | Position: " + board[player.getPosition()].getName());
+        print("Spieler: " + player.getName() + " | Geld: " + player.getMoney() + " | Position: " + board[player.getPosition()].getName());
+    }
+    public static void displayAll() {
+        for (Player player : Main.getPlayers()) display(player);
     }
 
     public static boolean getConfirmation(String message) {
-        System.out.println(message);
+        print(message);
         try {
             String input;
             do {
@@ -101,9 +118,8 @@ public class Main {
             } while (!input.equals("Y") && !input.equals("N"));
             return input.equals("Y");
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println(e.getMessage() + " | Exception with a confirmation");
         }
-        System.out.println("Ein Fehler ist aufgetreten");
         return false;
     }
 
@@ -114,8 +130,8 @@ public class Main {
         while (bidders > 1) {
             bidders = players.length;
             for (Player player : players) {
-                System.out.println(player.getName() + ": " + player.getMoney() + " | " + highestBid + " | What do you want to bid?");
-                System.out.println("If your bid is not a number or lower than the highest bid you won't bid in this round");
+                print(player.getName() + ": " + player.getMoney() + " | " + highestBid + " | What do you want to bid?");
+                print("If your bid is not a number or lower than the highest bid you won't bid in this round");
                 try {
                     String input = bufferedReader.readLine().strip();
                     if (Integer.parseInt(input) > highestBid) {
@@ -131,10 +147,10 @@ public class Main {
             }
         }
         if (highestBidder == null) {
-            System.out.println("No one bid on this property");
+            print("No one bid on this property");
             return;
         }
-        System.out.println(highestBidder.getName() + " bought the property for $" + highestBid);
+        print(highestBidder.getName() + " bought the property for $" + highestBid);
 
     }
 
@@ -142,7 +158,37 @@ public class Main {
         int[] dice = new int[2];
         dice[0] = (int) (Math.random() * 6) + 1;
         dice[1] = (int) (Math.random() * 6) + 1;
-        System.out.println("You rolled a " + dice[0] + " and a " + dice[1]);
+        print("You rolled a " + dice[0] + " and a " + dice[1]);
         return dice;
+    }
+
+    public static void remove(Player player) {
+        boolean hit = false;
+        for (int i=0; i<players.length; i++) {
+            if (hit) {
+                players[i-1] = players[i];
+                players[i] = null;
+            } else if (players[i].equals(player)) {
+                hit = true;
+            }
+        }
+        players = Arrays.copyOf(players, players.length-1);
+        if (players.length == 1) gameOver();
+    }
+
+    public static void gameOver() {
+        print("We have a winner!");
+        print("The winner is "+players[0].getName()+" with $"+players[0].getMoney());
+        print("Their properties are as follows:");
+        for (Buyables buyables : players[0].getProperties()) {
+            print(buyables.getName());
+        }
+        print("Thanks for playing!");
+        System.exit(0);
+    }
+
+    public static void print(String message) {
+        System.out.println(message);
+        try {bufferedWriter.write(message);} catch(Exception e) {System.err.println(e.getMessage() + " | Exception with printing");}
     }
 }

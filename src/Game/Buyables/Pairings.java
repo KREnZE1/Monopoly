@@ -53,14 +53,14 @@ public class Pairings extends Buyables {
                     player.buy(this, null, this.basePrice);
                 }
             } else {
-                System.out.println("You don't have enough money to buy a house");
+                Main.print("You don't have enough money to buy "+this.getName());
             }
         } else {
             if (this.getOwner() == player) {
-                System.out.println("You own this property");
+                Main.print("You own this property");
             } else {
                 player.changeMoney(-this.getCurrPrice(), new Player[]{this.getOwner()});
-                System.out.println("You paid $" + this.getCurrPrice() + " to " + this.getOwner().getName());
+                Main.print("You paid $" + this.getCurrPrice() + " to " + this.getOwner().getName());
             }
         }
     }

@@ -47,6 +47,9 @@ public class Street extends Buyables {
     public void addHouse() {
         houses++;
     }
+    public void removeHouse() {
+        houses--;
+    }
     public int getCurrPrice() {
         return rent[houses];
     }
@@ -58,14 +61,14 @@ public class Street extends Buyables {
                 }
                 else Main.auction(this);
             } else {
-                System.out.println("You don't have enough money to buy a house");
+                Main.print("You don't have enough money to buy "+this.getName());
             }
         } else {
             if (this.getOwner() == player) {
-                System.out.println("You own this property");
+                Main.print("You own this property");
             } else {
                 player.changeMoney(-this.getCurrPrice(), new Player[]{this.getOwner()});
-                System.out.println(player.getName() + " paid $" + this.getCurrPrice() + " to " + this.getOwner().getName() + " because " + this.getOwner().getName() + " owns " + this.getName());
+                Main.print(player.getName() + " paid $" + this.getCurrPrice() + " to " + this.getOwner().getName() + " because " + this.getOwner().getName() + " owns " + this.getName());
             }
         }
     }

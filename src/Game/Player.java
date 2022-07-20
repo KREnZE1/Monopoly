@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Player {
     final String name;
@@ -21,6 +22,7 @@ public class Player {
     boolean cFree;
 
     static boolean loop;
+    static String input;
 
     // region Cards
     final static Chance[] chanceCards = new Chance[] {
@@ -117,23 +119,23 @@ public class Player {
         }
     }
     public void imprisoned() {
-        System.out.println("You are in prison.");
+        Main.print("You are in prison.");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             loop = true;
             while (loop) {
                 if (doubles >= 3) {
                     doubles = 0;
-                    System.out.println("You couldn't free yourself. Now you need to pay");
+                    Main.print("You couldn't free yourself. Now you need to pay");
                     this.changeMoney(-1000);
                     move();
                     break;
                 }
 
-                System.out.println("How do you want to free yourself?");
-                System.out.println("1. Pay $1000 to get out of prison.");
-                System.out.println("2. Use a card from your hand.");
-                System.out.println("3. Roll");
+                Main.print("How do you want to free yourself?");
+                Main.print("1. Pay $1000 to get out of prison.");
+                Main.print("2. Use a card from your hand.");
+                Main.print("3. Roll");
                 String input = br.readLine();
                 switch (input) {
                     case "1" -> {
@@ -147,13 +149,13 @@ public class Player {
                         } else if (this.cFree) {
                             this.cFree = false;
                             loop = false;
-                        } else System.out.println("You have no card to free yourself from prison");
+                        } else Main.print("You have no card to free yourself from prison");
                     }
                     case "3" -> {
                         loop = false;
                         if (doubles >= 3) {
                             doubles = 0;
-                            System.out.println("Du hast dich nicht befreien können. Nun musst du bezahlen.");
+                            Main.print("Du hast dich nicht befreien können. Nun musst du bezahlen.");
                             this.changeMoney(-1000);
                             move();
                             break;
@@ -166,7 +168,7 @@ public class Player {
                             checkDoubles(r[0],r[1]);
                         }
                     }
-                    default -> System.out.println("Invalid input, please enter 1, 2 or 3");
+                    default -> Main.print("Invalid input, please enter 1, 2 or 3");
                 }
             }
         } catch (Exception e) {
@@ -177,10 +179,12 @@ public class Player {
     // section Other
     public void chance() {
         int r = (int) (Math.random() * 16);
+        Main.print(chanceCards[r].getEffect());
         chanceCards[r].doEffect(this);
     }
     public void communityChest() {
         int r = (int) (Math.random() * 16);
+        Main.print(communityChestCards[r].getEffect());
         communityChestCards[r].doEffect(this);
     }
     public void changeMoney(int amount, Player[] recipients) {
@@ -190,7 +194,33 @@ public class Player {
     }
     public void changeMoney(int amount) {
         this.money += amount;
-        //TODO: Logic for bankruptcy
+
+        while (this.money<0 && this.properties.size()>0) {
+            Main.print("You are in debt. You have to pay $" + Math.abs(this.money));
+            Main.print("On which property do you want to make money?");
+            for (Buyables property : this.properties) {
+                Main.print(property.getName());
+            }
+            try {
+                input = Main.bufferedReader.readLine();
+            } catch (Exception e) {System.err.println("Error encountered with bankruptcy");}
+            for (Buyables property : this.properties) {
+                if (property.getName().equals(input)) {
+                    if (property instanceof Street && ((Street) property).getHouses() > 0) {
+                        ((Street) property).removeHouse();
+                        this.changeMoney(((Street) property).getHousePrice()/2);
+                    } else {
+                        this.changeMoney(property.getBasePrice());
+                        this.properties.remove(property);
+                    }
+                    break;
+                }
+            }
+        }
+        if (this.money<0) {
+            Main.print("You have no more properties to pay off. You are bankrupt.");
+            Main.remove(this);
+        }
     }
     public void buy(Buyables property, Player seller, int cost) {
         this.changeMoney(-cost);
@@ -209,12 +239,12 @@ public class Player {
     //section Action after turn
     public void doAction() {
         while (Main.getConfirmation("Do you want to do something?") && !properties.isEmpty()) {
-            System.out.println("1. Do you want to check your properties?");
-            System.out.println("2. Do you want to build houses/hotels?");
-            String input;
+            Main.display(this);
+            Main.print("1. Do you want to check your properties?");
+            Main.print("2. Do you want to build houses/hotels?");
             try {
                 while (!((input = Main.bufferedReader.readLine()).equals("1") || input.equals("2"))) {
-                    System.out.println("Invalid input, please enter 1 or 2");
+                    Main.print("Invalid input, please enter 1 or 2");
                 }
                 if (input.equals("1")) {
                     this.checkProperties();
@@ -227,32 +257,31 @@ public class Player {
         }
     }
     private void build() {
-        System.out.println("Which property do you want to build houses/a hotel on?");
-        loop = true;
-        while (loop) {
-            try {
-                String input = Main.bufferedReader.readLine();
-                for (Buyables property : properties) {
-                    if (property.getName().equals(input) && (property instanceof Street) && ((Street) property).getHouses() < 4) {
-                        loop = false;
-                        this.changeMoney(-((Street) property).getHousePrice());
-                        ((Street) property).addHouse();
-                    }
+        Main.print("Which property do you want to build houses/a hotel on?");
+        try {
+            input = Main.bufferedReader.readLine().strip().toLowerCase();
+            for (Buyables property : properties) {
+                if (property.getName().toLowerCase().equals(input) && (property instanceof Street) && ((Street) property).getHouses() < 4) {
+                    loop = false;
+                    this.changeMoney(-((Street) property).getHousePrice());
+                    ((Street) property).addHouse();
+                    return;
                 }
-            } catch (IOException e) {
-                System.err.println("Error encountered");
             }
+        } catch (IOException e) {
+            System.err.println("Error encountered");
         }
+        Main.print("Your input wasn't a valid street");
     }
     private void checkProperties() {
-        System.out.println("You own the following properties:");
+        Main.print("You own the following properties:");
         for (Buyables property : properties) {
             if (property instanceof Street) {
-                System.out.println(property.getName() + " with " + ((Street) property).getHouses() + " houses");
+                Main.print(property.getName() + " with " + ((Street) property).getHouses() + " houses");
             } else {
-                System.out.println(property.getName());
+                Main.print(property.getName());
             }
-            System.out.println("The rent is currently $" + property.getCurrPrice());
+            Main.print("The rent is currently $" + property.getCurrPrice());
         }
     }
 }
